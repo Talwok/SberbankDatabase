@@ -283,3 +283,125 @@ static void ShowTableDeposits()
     con.Close();
 }
 #endregion
+
+#region Creations
+static void CreateTableUsers()
+{
+    using var con = new NpgsqlConnection(connectionString);
+    con.Open();
+
+    string sql = "CREATE TABLE public.users" +
+        "(" +
+        "user_id serial NOT NULL, " +
+        "user_first_name text, " +
+        "user_mid_name text, " +
+        "user_last_name text, " +
+        "PRIMARY KEY (user_id)" +
+        ");";
+
+    using var cmd = new NpgsqlCommand(sql, con);
+    cmd.Prepare();
+    cmd.ExecuteNonQuery();
+    con.Close();
+}
+
+static void CreateTableAccounts()
+{
+    using var con = new NpgsqlConnection(connectionString);
+    con.Open();
+
+    string sql = "CREATE TABLE public.accounts" +
+        "(" +
+        "account_id serial NOT NULL," +
+        "account_user bigint REFERENCES users (user_id)," +
+        "account_type text," +
+        "account_value numeric," +
+        "account_units text," +
+        "PRIMARY KEY (account_id)" +
+        ");";
+
+    using var cmd = new NpgsqlCommand(sql, con);
+    cmd.Prepare();
+    cmd.ExecuteNonQuery();
+    con.Close();
+}
+
+static void CreateTableDeposits()
+{
+    using var con = new NpgsqlConnection(connectionString);
+    con.Open();
+
+    string sql = "CREATE TABLE public.deposits" +
+    "(" +
+    "deposit_id serial NOT NULL," +
+    "deposit_from bigint REFERENCES accounts (account_id) NOT NULL," +
+    "deposit_to bigint REFERENCES accounts (account_id) NOT NULL," +
+    "deposit_date date," +
+    "deposit_time time," +
+    "deposit_value numeric," +
+    "deposit_units text," +
+    "PRIMARY KEY (deposit_id)" +
+    ");";
+
+    using var cmd = new NpgsqlCommand(sql, con);
+    cmd.Prepare();
+    cmd.ExecuteNonQuery();
+    con.Close();
+}
+#endregion
+
+#region Fillings
+static void FillTableUsers()
+{
+    using var con = new NpgsqlConnection(connectionString);
+    con.Open();
+
+    string sql = "INSERT INTO users (user_mid_name, user_first_name, user_last_name) VALUES" +
+    "('Иванов', 'Иван', 'Иванович')," +
+    "('Денисов', 'Денис', 'Денисович')," +
+    "('Петров', 'Петр', 'Петрович')," +
+    "('Александров', 'Александр', 'Александрович')," +
+    "('Сергеев', 'Сергей', 'Сергеевич');";
+
+    using var cmd = new NpgsqlCommand(sql, con);
+    cmd.Prepare();
+    cmd.ExecuteNonQuery();
+    con.Close();
+}
+
+static void FillTableAccounts()
+{
+    using var con = new NpgsqlConnection(connectionString);
+    con.Open();
+
+    string sql = "INSERT INTO accounts (account_user, account_type, account_value, account_units) VALUES" +
+    "(1, 'credit_card', 15000, 'RUB')," +
+    "(2, 'credit_card', 200, 'USD')," +
+    "(3, 'credit_card', 5500, 'RUB')," +
+    "(4, 'credit_card', 4890, 'EUR')," +
+    "(5, 'money_box', 245021, 'RUB');";
+
+    using var cmd = new NpgsqlCommand(sql, con);
+    cmd.Prepare();
+    cmd.ExecuteNonQuery();
+    con.Close();
+}
+
+static void FillTableDeposits()
+{
+    using var con = new NpgsqlConnection(connectionString);
+    con.Open();
+
+    string sql = "INSERT INTO deposits (deposit_from, deposit_to, deposit_date, deposit_time, deposit_value, deposit_units) VALUES" +
+    "(1, 2, '2017-03-14', '16:11:42', 250, 'RUB')," +
+    "(1, 3, '2017-03-16', '04:32:15', 100, 'RUB')," +
+    "(3, 1, '2017-03-15', '08:21:05', 1500, 'RUB')," +
+    "(4, 2, '2017-03-11', '19:07:26', 420, 'RUB')," +
+    "(5, 4, '2017-03-15', '23:10:03', 13000, 'RUB');";
+
+    using var cmd = new NpgsqlCommand(sql, con);
+    cmd.Prepare();
+    cmd.ExecuteNonQuery();
+    con.Close();
+}
+#endregion
