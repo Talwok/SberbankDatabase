@@ -3,6 +3,12 @@ using System.Text;
 
 const string connectionString = "Host=localhost;Username=postgres;Password=sudo1010;Database=sberbank_db";
 
+//CreateTableUsers();
+//CreateTableAccounts();
+//CreateTableDeposits();
+//FillTableUsers();
+//FillTableAccounts();
+
 #region Startup
 ShowVersion();
 
@@ -183,7 +189,7 @@ static void AddDeposit(string fromId, string toId, string value, string units)
     var secondResult = cmd.ExecuteScalar();
     cmd.Dispose();
 
-    if(firstResult != null && secondResult != null)
+    if((firstResult != null && secondResult != null) && (decimal)firstResult >= decimal.Parse(value))
     {
         sql = "INSERT INTO deposits(deposit_from, deposit_to, deposit_date, deposit_time, deposit_value, deposit_units) " +
         "VALUES(@fromId, @toId, @dateNow, @timeNow, @value, @units);\r\n" +
