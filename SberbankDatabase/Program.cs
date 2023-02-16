@@ -160,7 +160,10 @@ static void AddDeposit(string fromId, string toId, string value, string units)
     con.Open();
 
     var sql = "INSERT INTO deposits(deposit_from, deposit_to, deposit_date, deposit_time, deposit_value, deposit_units) " +
-        "VALUES(@fromId, @toId, @dateNow, @timeNow, @value, @units)";
+        "VALUES(@fromId, @toId, @dateNow, @timeNow, @value, @units);\r\n" +
+        $"UPDATE accounts SET account_value = account_value - @value WHERE account_id = @fromId;\r\n" +
+        $"UPDATE accounts SET account_value = account_value + @value WHERE account_id = @toId;\r\n";
+    
     using var cmd = new NpgsqlCommand(sql, con);
 
     cmd.Parameters.AddWithValue("fromId", int.Parse(fromId));
