@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SberbankDatabase", "SberbankDatabase\SberbankDatabase.csproj", "{0BF2F073-B0F2-490E-B431-B28DDEF4A335}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BF2F073-B0F2-490E-B431-B28DDEF4A335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BF2F073-B0F2-490E-B431-B28DDEF4A335}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BF2F073-B0F2-490E-B431-B28DDEF4A335}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BF2F073-B0F2-490E-B431-B28DDEF4A335}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9F2115B-F859-4FB2-AA70-6A8982B613AE}
+	EndGlobalSection
+EndGlobal
