@@ -73,6 +73,10 @@ while (true)
                 Console.WriteLine();
 
                 ShowTableDeposits();
+
+                Console.WriteLine();
+
+                ShowTableAccounts();
             }
             break;
         case "users add":
@@ -159,22 +163,50 @@ static void AddDeposit(string fromId, string toId, string value, string units)
 
     con.Open();
 
-    var sql = "INSERT INTO deposits(deposit_from, deposit_to, deposit_date, deposit_time, deposit_value, deposit_units) " +
-        "VALUES(@fromId, @toId, @dateNow, @timeNow, @value, @units);\r\n" +
-        $"UPDATE accounts SET account_value = account_value - @value WHERE account_id = @fromId;\r\n" +
-        $"UPDATE accounts SET account_value = account_value + @value WHERE account_id = @toId;\r\n";
-    
-    using var cmd = new NpgsqlCommand(sql, con);
+    var sql = "SELECT account_value FROM accounts WHERE account_id = @fromId AND account_units = @units";
+
+    var cmd = new NpgsqlCommand(sql, con);
 
     cmd.Parameters.AddWithValue("fromId", int.Parse(fromId));
-    cmd.Parameters.AddWithValue("toId", int.Parse(toId));
-    cmd.Parameters.AddWithValue("dateNow", DateOnly.FromDateTime(DateTime.Now));
-    cmd.Parameters.AddWithValue("timeNow", TimeOnly.FromDateTime(DateTime.Now));
-    cmd.Parameters.AddWithValue("value", double.Parse(value));
     cmd.Parameters.AddWithValue("units", units);
     cmd.Prepare();
+    var firstResult = cmd.ExecuteScalar();
+    cmd.Dispose();
 
-    cmd.ExecuteNonQuery();
+    sql = "SELECT account_value FROM accounts WHERE account_id = @toId AND account_units = @units";
+
+    cmd = new NpgsqlCommand(sql, con);
+
+    cmd.Parameters.AddWithValue("toId", int.Parse(toId));
+    cmd.Parameters.AddWithValue("units", units);
+    cmd.Prepare();
+    var secondResult = cmd.ExecuteScalar();
+    cmd.Dispose();
+
+    if(firstResult != null && secondResult != null)
+    {
+        sql = "INSERT INTO deposits(deposit_from, deposit_to, deposit_date, deposit_time, deposit_value, deposit_units) " +
+        "VALUES(@fromId, @toId, @dateNow, @timeNow, @value, @units);\r\n" +
+        $"UPDATE accounts SET account_value = account_value - @value WHERE account_id = @fromId AND account_units = @units;\r\n" +
+        $"UPDATE accounts SET account_value = account_value + @value WHERE account_id = @toId AND account_units = @units;\r\n";
+
+        cmd = new NpgsqlCommand(sql, con);
+
+        cmd.Parameters.AddWithValue("fromId", int.Parse(fromId));
+        cmd.Parameters.AddWithValue("toId", int.Parse(toId));
+        cmd.Parameters.AddWithValue("dateNow", DateOnly.FromDateTime(DateTime.Now));
+        cmd.Parameters.AddWithValue("timeNow", TimeOnly.FromDateTime(DateTime.Now));
+        cmd.Parameters.AddWithValue("value", double.Parse(value));
+        cmd.Parameters.AddWithValue("units", units);
+        cmd.Prepare();
+        cmd.ExecuteNonQuery();
+        cmd.Dispose();
+    }
+    else
+    {
+        Console.WriteLine("Can't execute this adding.");
+    }
+    
     con.Close();
 }
 #endregion
